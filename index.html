@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Verb Conjugator</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-color: white;
+            --input-bg: #334155;
+            --button-bg: #38bdf8;
+            --table-bg: #1e40af;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            background: var(--container-bg);
+            padding: 20px;
+            margin: auto;
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        input {
+            background: var(--input-bg);
+            color: var(--text-color);
+            outline: none;
+            border: 2px solid var(--button-bg);
+        }
+
+        button {
+            cursor: pointer;
+            background-color: var(--button-bg);
+            color: black;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: left;
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 8px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--table-bg);
+            color: white;
+        }
+
+        table, th, td {
+            border: 1px solid white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🔤 English Verb Conjugator</h2>
+        <input type="text" id="verbInput" placeholder="Enter a verb (e.g., go, eat, play)">
+        <button onclick="conjugateVerb()">Conjugate</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let irregularVerbs = {
+            "go": ["went", "gone"],
+            "eat": ["ate", "eaten"],
+            "play": ["played", "played"],
+            "have": ["had", "had"],
+            "be": ["was/were", "been"],
+            "do": ["did", "done"],
+            "see": ["saw", "seen"],
+            "write": ["wrote", "written"]
+        };
+
+        let modalVerbs = ["can", "must", "shall", "will", "may", "might", "should", "would", "could"];
+
+        function getPresentForm(verb) {
+            if (verb.endsWith("y") && !"aeiou".includes(verb[verb.length - 2])) return verb.slice(0, -1) + "ies";
+            if (verb.endsWith("s") || verb.endsWith("x") || verb.endsWith("z") || verb.endsWith("ch") || verb.endsWith("sh") || verb.endsWith("o")) return verb + "es";
+            return verb + "s";
+        }
+
+        function getPastAndParticiple(verb) {
+            return irregularVerbs[verb] || [verb + "ed", verb + "ed"];
+        }
+
+        function getPresentParticiple(verb) {
+            if (verb.endsWith("ee")) return verb + "ing"; // التعامل مع الأفعال التي تنتهي بـ "ee" مثل "see"
+            if (verb.endsWith("e") && verb !== "be") return verb.slice(0, -1) + "ing"; // إزالة "e" للأفعال العادية
+            return verb + "ing"; // إضافة "ing" مباشرة للأفعال الأخرى
+        }
+
+        function conjugateVerb() {
+            let verb = document.getElementById("verbInput").value.trim().toLowerCase();
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+
+            if (!verb) {
+                resultDiv.innerHTML = "<p style='color:red;'>Please enter a verb.</p>";
+                return;
+            }
+
+            if (modalVerbs.includes(verb)) {
+                resultDiv.innerHTML = `<h3>"${verb}" is a modal verb and does not have all tenses.</h3>`;
+                return;
+            }
+
+            let [past, pastParticiple] = getPastAndParticiple(verb);
+            let present = getPresentForm(verb);
+            let presentParticiple = getPresentParticiple(verb);
+
+            resultDiv.innerHTML = `
+                <h3>Conjugation of "${verb}"</h3>
+                <table>
+                    <tr><th>Tense</th><th>Example</th></tr>
+                    <tr><td>Present Simple</td><td>He/She ${present}</td></tr>
+                    <tr><td>Past Simple</td><td>He/She ${past}</td></tr>
+                    <tr><td>Future Simple</td><td>He/She will ${verb}</td></tr>
+                    <tr><td>Present Continuous</td><td>He/She is ${presentParticiple}</td></tr>
+                    <tr><td>Past Continuous</td><td>He/She was ${presentParticiple}</td></tr>
+                    <tr><td>Future Continuous</td><td>He/She will be ${presentParticiple}</td></tr>
+                    <tr><td>Present Perfect</td><td>He/She has ${pastParticiple}</td></tr>
+                    <tr><td>Past Perfect</td><td>He/She had ${pastParticiple}</td></tr>
+                    <tr><td>Future Perfect</td><td>He/She will have ${pastParticiple}</td></tr>
+                    <tr><td>Present Perfect Continuous</td><td>He/She has been ${presentParticiple}</td></tr>
+                    <tr><td>Past Perfect Continuous</td><td>He/She had been ${presentParticiple}</td></tr>
+                    <tr><td>Future Perfect Continuous</td><td>He/She will have been ${presentParticiple}</td></tr>
+                </table>
+            `;
+        }
+    </script>
+
+</body>
+</html>
